@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "outDir": "build/ts",
+    "module": "NodeNext",
+    "target": "ESNext",
+    "checkJs": true /* Type check .js files. */,
+    "lib": ["esnext", "dom"],
+    "allowSyntheticDefaultImports": true,
+    "noImplicitReturns": true,
+    "sourceMap": true,
+    "declaration": true,
+    "useUnknownInCatchVariables": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "rootDir": "./",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": true
+  },
+
+  "include": ["tools/**/*.ts", "src/**/*.ts"],
+  "exclude": ["build", "node_modules"]
+}

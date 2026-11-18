@@ -1,11 +1,52 @@
 {
   "name": "@markw65/project-utils",
   "version": "1.0.0",
+  "type": "module",
   "description": "Utilities that I use in various projects",
-  "main": "build/index.cjs",
+  "main": "./build/main.mjs",
+  "types": "./build/ts/src/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./build/main.mjs",
+      "types": "./build/ts/src/main.d.ts",
+      "default": "./build/main.mjs"
+    }
+  },
+  "files": [
+    "build/main.mjs",
+    "build/ts/src/**/*.d.ts"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepack": "npm run build:release",
+    "build": "tsx tools/builder.ts",
+    "watch": "tsx tools/builder.ts --watch",
+    "build:release": "tsx tools/builder.ts --release"
   },
   "author": "markw65",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import-x": "^4.16.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "typescript-eslint": "8.73"
+  },
+  "devDependencies": {
+    "@types/node": "^25.1.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.5",
+    "tsx": "^4.23.15",
+    "type-fest": "^6.0.2",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "esbuild": "^0.28.2",
+    "eslint": "^9.0.0 || ^10.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "unrs-resolver@1.11.1": true,
+    "fsevents@2.3.3": true
+  }
 }
