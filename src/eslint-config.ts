@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import { importX } from "eslint-plugin-import-x";
-import reactPlugin from "eslint-plugin-react";
+import reactPlugin from "@eslint-react/eslint-plugin";
+import reactHooks from "eslint-plugin-react-hooks";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
 import {
@@ -13,11 +14,13 @@ export interface EslintConfig {
   dirs?: string[];
   /** Whether to enable React rules for this specific project */
   react?: boolean;
+  tsprojects?: string[];
 }
 
+type SingleConfig = Parameters<typeof defineConfig>[0];
 export function createConfig(
   options: EslintConfig = {},
-  ...configs: Array<Parameters<typeof defineConfig>[0]>
+  ...configs: Array<SingleConfig>
 ) {
   const { dirs = ["."], react = true } = options;
 
@@ -32,43 +35,41 @@ export function createConfig(
         "@typescript-eslint": tseslintPlugin,
       },
     },
-    {
-      name: "core",
-      files: dirs.map((dir) => `${dir}/**/*.{js,mjs,cjs,ts,jsx,tsx}`),
-      extends: [js.configs.recommended, importX.flatConfigs.recommended],
-    },
-    {
-      name: "core-ts",
-      files: dirs.map((dir) => `${dir}/**/*.{ts,jsx,tsx}`),
-      extends: [...tseslintConfigs.recommended, importX.flatConfigs.typescript],
-    },
-
-    ...(react
+    js.configs.recommended,
+    importX.flatConfigs.recommended,
+    importX.flatConfigs.typescript,
+    tseslintConfigs.recommended,
+    ...(options.tsprojects
       ? [
           {
-            name: "react-config",
-            files: dirs.map((dir) => `${dir}/**/*.{jsx,tsx}`),
-            ...reactPlugin.configs.flat.recommended,
+            files: dirs.map((dir) => `${dir}/**/*.{ts,tsx,cts,mts}`),
             languageOptions: {
-              globals: {
-                ...globals.browser,
-              },
               parserOptions: {
-                ecmaFeatures: {
-                  jsx: true,
-                },
+                project: options.tsprojects,
               },
             },
-            settings: {
-              react: {
-                version: "detect",
-              },
-            },
+          },
+        ]
+      : []),
+    ...(react
+      ? ([
+          reactPlugin.configs["recommended-typescript"],
+          reactHooks.configs.flat.recommended,
+          {
             rules: {
-              "react/react-in-jsx-scope": "off",
+              "@eslint-react/error-boundaries": "off",
+              "@eslint-react/exhaustive-deps": "off",
+              "@eslint-react/immutability": "off",
+              "@eslint-react/purity": "off",
+              "@eslint-react/refs": "off",
+              "@eslint-react/rules-of-hooks": "off",
+              "@eslint-react/set-state-in-effect": "off",
+              "@eslint-react/set-state-in-render": "off",
+              "@eslint-react/static-components": "off",
+              "@eslint-react/use-memo": "off",
             },
           } as const,
-        ]
+        ] satisfies SingleConfig[])
       : []),
 
     {
@@ -87,20 +88,12 @@ export function createConfig(
           { maxDepth: Infinity, ignoreExternal: true },
         ],
         "import-x/no-self-import": "error",
+        "import-x/default": "off",
+        "import-x/no-named-as-default-member": "off",
+        "import-x/no-unresolved": "off",
 
         // General Overrides
         //"no-console": "warn",
-        "@typescript-eslint/no-unused-vars": [
-          "error",
-          { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
-        ],
-        "@typescript-eslint/no-unused-expressions": [
-          "error",
-          {
-            allowShortCircuit: true,
-            allowTernary: true,
-          },
-        ],
         "prefer-const": [
           "error",
           {
@@ -116,6 +109,26 @@ export function createConfig(
         ],
         "no-var": "error",
         eqeqeq: ["error", "always", { null: "ignore" }],
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-unused-expressions": "off",
+        "no-constant-binary-expression": "off",
+        "@typescript-eslint/no-require-imports": "off",
+      },
+    },
+    {
+      files: dirs.map((dir) => `${dir}/**/*.{ts,tsx,cts,mts}`),
+      rules: {
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+        ],
+        "@typescript-eslint/no-unused-expressions": [
+          "error",
+          {
+            allowShortCircuit: true,
+            allowTernary: true,
+          },
+        ],
       },
     },
     ...configs,
