@@ -102,7 +102,6 @@ function spawnByLine(
     const rl = readline.createInterface({ input: stdout });
     const rle = readline.createInterface({ input: stderr });
     proc.on("error", reject);
-    stderr.on("data", (data) => console.error(data.toString()));
     rl.on("line", lineHandler);
     rle.on("line", lineHandler);
     proc.on("close", (code) => {
