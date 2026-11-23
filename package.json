@@ -50,5 +50,9 @@
     "esbuild@0.28.2": true,
     "unrs-resolver@1.11.1": true,
     "fsevents@2.3.3": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markw65/project-utils.git"
   }
 }
